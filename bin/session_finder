@@ -1,0 +1,20 @@
+#!/usr/local/bin/ruby
+
+lib = File.expand_path(File.dirname(__FILE__) + '/../lib')
+$LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
+
+require 'session_finder'
+require 'session_finder/configuration'
+
+args = ARGV.dup
+ARGV.clear
+command = args.shift.strip rescue 'help'
+
+# Try default local configuration first
+# falls back to session_finder.yml otherwise.
+local_filename = 'local_config.yml'
+filename = local_filename if File.exist? local_filename
+config = SessionFinder::Configuration.new(filename).config
+
+SessionFinder::Command.instance.run(config, command, args)
+
